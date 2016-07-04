@@ -59,7 +59,7 @@ var height;
 
 	//Init vars
 	player.x=width/2;
-	player.y=100;
+	player.y=80;
 	player.xspeed=0;
 	player.yspeed=0;
 
@@ -100,7 +100,7 @@ function updateGame(){
 
 	//Gameover
 	if (player.y > window.innerHeight){
-		player.y=0;
+		player.y=80;
 		player.yspeed=0;
 		player.x=width/2;
 	}
