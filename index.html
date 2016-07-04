@@ -9,11 +9,14 @@
 
 	<meta name="HandheldFriendly" content="True">
 	<meta name="MobileOptimized" content="720">
-	<meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
+	<meta name="viewport" content="width=device-width, target-densitydpi=300dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
 	<meta name="format-detection" content="telephone=no" />
 	<title>Gyro Game</title>
 
 	<style>
+	html,body{
+		margin:0;
+	}
 		#canvas-container {
 			width: 100%;
 			text-align:center;
@@ -26,11 +29,11 @@
 
 <body>
 	<span style="position:absolute;">
-		alpha:<span id="alpha"></span> | 
+		<!-- alpha:<span id="alpha"></span> | 
 		beta:<span id="beta"></span> | 
 		gamma:<span id="gamma"></span><br>
 		p.x:<span id="px"></span> | p.y<span id="py"></span><br>
-		p.speed<span id="pspeed"> </span>
+		p.speed<span id="pspeed"> </span> -->
 	</span>
 
 	<div id="canvas-container">
@@ -42,28 +45,41 @@
 	<script>
 
 
-/* important! for alignment, you should make things
- * relative to the canvas' current width/height.
- */
+
+//0,0 is top left in Canvas
+//Stack
 var player={};
-var mobileRatio;
-var gravity=.91;
-var blockspeed=-1.31;
-var blocks=[{x:1},{},{},{}];
-var width;
-var height;
+var mobileRatio = 9/16;;
+var height = window.innerHeight;
+var width=height / (16/9);;
+var gravity=.91/2;
+var blockspeed;
+var gyro={};
+var vgap = (height*1) / 3;
+var keymovepower=0.55;
+var friction = 0.95;
+var blockwidth=width*0.3;
+var blockheight = height*0.04;
+var jumpCountdown=0; // Ticks town to 0, if 0 can jump
+var blocks=[
+	{x:width/2,y:vgap},
+	{x:0,y:vgap*2},
+	{x:0,y:vgap*3},
+	// {x:0,y:vgap*4}
+];
+var score=0;
 
  function init() {
+ 	if (!localStorage.highscore)
+ 		localStorage.highscore=0;
+ 	if(score>localStorage.highscore)
+ 		localStorage.highscore=score;
+ 	score=0;
 
-	//canvas = document.getElementById("canvas");
-	height = window.innerHeight;
-	width=height / (16/9);
-	mobileRatio = 9/16;
-
+	blockspeed=-2;
 	canvas.width  = width
 	canvas.height = height;
 	canvas.imageSmoothingEnabled = true;
-
 
 	//Init vars
 	player.x=width/2;
@@ -71,13 +87,16 @@ var height;
 	player.xspeed=0;
 	player.yspeed=0;
 
-	//Game Loop
-	var ONE_FRAME_TIME = 1000 / 60 ;
-	var mainloop = function() {
-		updateGame();
-		drawGame();
-	};
-	setInterval( mainloop, ONE_FRAME_TIME );
+	//reset blocks except first so player can bounce on it
+	blocks[0]={x:width/2,y:vgap};
+	for (var i = 1; i < blocks.length; i++) {
+		blocks[i].y=vgap*(i+1);
+		resetBlock(blocks[i]);
+	}
+}
+
+function resetBlock(block){
+	block.x=Math.floor((Math.random() * (width - (width*0.2)  )) + 1);
 
 }
 
@@ -88,37 +107,112 @@ function drawGame(){
 	//draw Ball
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
-	ctx.arc(player.x,player.y,26 * mobileRatio,0,2*Math.PI);
+	ctx.arc(player.x,player.y,19 * mobileRatio,0,2*Math.PI);
 	ctx.stroke();
 	ctx.fill();
+
+	//Draw Blocks
+	for (var i = 0; i < blocks.length; i++) {
+		// Create gradient
+		var block = blocks[i];
+		var grd = ctx.createLinearGradient(0,0,200,0);
+		grd.addColorStop(0,"red");
+		grd.addColorStop(1,"purple");
+		// Fill with gradient
+		ctx.fillStyle = grd;
+		ctx.fillRect(block.x,block.y,blockwidth,blockheight);
+	}
+
+	//Draw Text
+	var ctx = canvas.getContext("2d");
+	ctx.font = "16px Arial";
+	ctx.fillText("Score: " + Math.round(score) ,10,50);
+	if (localStorage.highscore>0)
+		ctx.fillText("High: " + Math.round(localStorage.highscore) ,10,80);
 
 
 }
 
 function updateGame(){
-
+	score +=0.25;
 	//Gravity + movement
 	player.yspeed+=gravity;
+	blockspeed-=0.001;
+	if (jumpCountdown!=0)
+		jumpCountdown--;
 
-	//update blocks
+	//Calculate key movement for old school keyboards.
+	if (keys[37])	//Left arrow
+		player.xspeed-=keymovepower;
+	if (keys[39])	//Right arrow
+		player.xspeed+=keymovepower;
 
+	
+
+	//Calculate gyro into player pos
+	if (gyro.beta)
+		player.xspeed = (gyro.beta/15) ;
+	player.xspeed*=friction;
 	//Update player pos
 	player.x+=player.xspeed;
 	player.y+=player.yspeed;
 
+	if (player.x<0)
+		player.x=width;
+	if (player.x>width)
+		player.x=0;
+
 	//Gameover
 	if (player.y > window.innerHeight){
-		player.y=80;
-		player.yspeed=0;
-		player.x=width/2;
+		// player.y=80;
+		// player.yspeed=0;
+		// player.x=width/2;
+		init()
 	}
 
+
+	for (var i = 0; i < blocks.length; i++) {
+		var block = blocks[i];
+		//Player Hit Detection of blocks, only if jump is not on cooldown
+		if (jumpCountdown==0){
+			var xdif=player.x-block.x;
+			var ydif=player.y-block.y;
+			//x and y hit
+			// if(i==0)
+			// console.log("x dif = " + xdif + " ydif " + ydif);
+			if (xdif >= 0 && xdif <= blockwidth ){
+				if (ydif>=0 &&  ydif <blockheight/2 ){
+					// console.log("The y IS TRUE");
+					player.yspeed=blockspeed;
+					player.yspeed-=10;
+					jumpCountdown=30; //0.5 seconds
+				}
+			}
+		}
+
+
+		//Update pos
+		block.y+=blockspeed;
+		//reset going off
+		if(block.y < 0){
+			block.y=height;
+		}
+	}
 
 
 }
 
  
 init()
+
+	//Game Loop
+	var ONE_FRAME_TIME = 1000 / 60 ;
+	var mainloop = function() {
+		updateGame();
+		drawGame();
+	};
+	setInterval( mainloop, ONE_FRAME_TIME );
+
 
 //get orientation info, rolling back if gyro info not available
 if (window.DeviceOrientationEvent) {//
@@ -127,11 +221,18 @@ if (window.DeviceOrientationEvent) {//
 	}, true);
 } 
 
+var keys = [];
+window.onkeyup = function(e) {keys[e.keyCode]=false;}
+window.onkeydown = function(e) {keys[e.keyCode]=true;}
+
 function processGyro(alpha,beta,gamma)
 {
-	// document.getElementById("alpha").innerHTML=alpha;
+	gyro.alpha=alpha;
+	gyro.beta=beta;
+	gyro.gamma=gamma;
+	//document.getElementById("alpha").innerHTML=alpha;
 	// document.getElementById("beta").innerHTML=beta;
-	// document.getElementById("gamma").innerHTML =gamma;
+	//document.getElementById("gamma").innerHTML =gamma;
 	// document.getElementById("px").innerHTML =player.x;
 	// document.getElementById("py").innerHTML =player.y;
 	// document.getElementById("pspeed").innerHTML = "x:" + player.xspeed + " y:" + player.yspeed;
