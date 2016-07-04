@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -6,12 +5,9 @@
 	<!-- Meta tags for mobile -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="mobile-web-app-capable" content="yes">
-
-
-  <link rel="shortcut icon" href="favicon.ico">
-  <link rel="apple-touch-icon" href="meta/apple-touch-icon.png">
+	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="apple-touch-icon" href="meta/apple-touch-icon.png">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-
 	<meta name="HandheldFriendly" content="True">
 	<meta name="MobileOptimized" content="720">
 	<meta name="viewport" content="width=device-width, target-densitydpi=300dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -19,40 +15,24 @@
 	<title>Gyro Bounce</title>
 
 	<style>
-	html,body{
-		margin:0;
-	}
+		html,body{
+			margin:0;
+		}
 		#canvas-container {
 			width: 100%;
 			text-align:center;
 		}
 	</style>
-
-
 </head>
 
-
 <body>
-	<span style="position:absolute;">
-		<!-- alpha:<span id="alpha"></span> | 
-		beta:<span id="beta"></span> | 
-		gamma:<span id="gamma"></span><br>
-		p.x:<span id="px"></span> | p.y<span id="py"></span><br>
-		p.speed<span id="pspeed"> </span> -->
-	</span>
-
 	<div id="canvas-container">
 		<canvas id="canvas" width="200" height="100" style="border:0px">
 		</canvas>
 	</div>
 
-
 	<script>
-
-
-
 //0,0 is top left in Canvas
-//Stack
 var player={};
 var mobileRatio = 9/16;;
 var height = window.innerHeight;
@@ -67,27 +47,24 @@ var blockwidth=width*0.28;
 var blockheight = height*0.035;
 var jumpCountdown=0; // Ticks town to 0, if 0 can jump
 var blocks=[
-	{x:width/2,y:vgap},
-	{x:0,y:vgap*2},
-	{x:0,y:vgap*3},
-	// {x:0,y:vgap*4}
-];
+{x:width/2,y:vgap},
+{x:0,y:vgap*2},
+{x:0,y:vgap*3}];
 var score=0;
 
- function init() {
- 	if (!localStorage.highscore)
- 		localStorage.highscore=0;
- 	if(score>localStorage.highscore)
- 		localStorage.highscore=score;
- 	score=0;
+function init() {
+	if (!localStorage.highscore)
+		localStorage.highscore=0;
+	if(score>localStorage.highscore)
+		localStorage.highscore=score;
+	score=0;
 
-	blockspeed=-2;
+	blockspeed=-2; //Init Canvas
 	canvas.width  = width
 	canvas.height = height;
 	canvas.imageSmoothingEnabled = true;
 
-	//Init vars
-	player.x=width/2;
+	player.x=width/2; //Init player
 	player.y=80;
 	player.xspeed=0;
 	player.yspeed=0;
@@ -102,13 +79,10 @@ var score=0;
 
 function resetBlock(block){
 	block.x=Math.floor((Math.random() * (width - (width*0.2)  )) + 1);
-
 }
 
 function drawGame(){
-
 	var ctx = canvas.getContext("2d");
-
 	//draw Ball
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
@@ -127,15 +101,12 @@ function drawGame(){
 		ctx.fillStyle = grd;
 		ctx.fillRect(block.x,block.y,blockwidth,blockheight);
 	}
-
 	//Draw Text
 	var ctx = canvas.getContext("2d");
 	ctx.font = "16px Arial";
 	ctx.fillText("Score: " + Math.round(score) ,10,50);
 	if (localStorage.highscore>0)
 		ctx.fillText("High: " + Math.round(localStorage.highscore) ,10,80);
-
-
 }
 
 function updateGame(){
@@ -145,15 +116,11 @@ function updateGame(){
 	blockspeed-=0.001;
 	if (jumpCountdown!=0)
 		jumpCountdown--;
-
 	//Calculate key movement for old school keyboards.
 	if (keys[37])	//Left arrow
 		player.xspeed-=keymovepower;
 	if (keys[39])	//Right arrow
 		player.xspeed+=keymovepower;
-
-	
-
 	//Calculate gyro into player pos
 	if (gyro.beta)
 		player.xspeed = (gyro.beta/12) ;
@@ -167,25 +134,17 @@ function updateGame(){
 	if (player.x>width)
 		player.x=0;
 
-	//Gameover
-	if (player.y > window.innerHeight || player.y<5){
-		// player.y=80;
-		// player.yspeed=0;
-		// player.x=width/2;
-		init()
-	}
-
+	//Gameover scenarios
+	if (player.y > window.innerHeight || player.y<5)
+		init();	
 
 	for (var i = 0; i < blocks.length; i++) {
 		var block = blocks[i];
 		//Player Hit Detection of blocks, only if jump is not on cooldown
 		if (jumpCountdown==0){
 			var xdif=player.x-block.x;
-			var ydif=player.y-block.y;
-			//x and y hit
-			// if(i==0)
-			// console.log("x dif = " + xdif + " ydif " + ydif);
-			if (xdif >= 0 && xdif <= blockwidth ){
+			var ydif=player.y-block.y;				
+			if (xdif >= 0 && xdif <= blockwidth ){ //x and y hit
 				if (ydif>=0 &&  ydif <blockheight ){
 					// console.log("The y IS TRUE");
 					player.yspeed=blockspeed;
@@ -194,20 +153,15 @@ function updateGame(){
 				}
 			}
 		}
-
-
-		//Update pos
+		//Update blocks and reset y if off screen		
 		block.y+=blockspeed;
-		//reset going off
-		if(block.y < 0){
-			block.y=height;
+		if(block.y < 0) { //reset blocks going off screen
+			block.y=height;		
+			resetBlock(block);
 		}
 	}
-
-
 }
 
- 
 init()
 	//Game Loop
 	var ONE_FRAME_TIME = 1000 / 60 ;
@@ -217,14 +171,12 @@ init()
 	};
 	setInterval( mainloop, ONE_FRAME_TIME );
 
-
 //get orientation info, rolling back if gyro info not available
 if (window.DeviceOrientationEvent) {//
 	window.addEventListener("deviceorientation", function () {//gyro
 		processGyro(event.beta, event.gamma, event.alpha); 
 	}, true);
 } 
-
 var keys = [];
 window.onkeyup = function(e) {keys[e.keyCode]=false;}
 window.onkeydown = function(e) {keys[e.keyCode]=true;}
@@ -234,12 +186,6 @@ function processGyro(alpha,beta,gamma)
 	gyro.alpha=alpha;
 	gyro.beta=beta;
 	gyro.gamma=gamma;
-	//document.getElementById("alpha").innerHTML=alpha;
-	// document.getElementById("beta").innerHTML=beta;
-	//document.getElementById("gamma").innerHTML =gamma;
-	// document.getElementById("px").innerHTML =player.x;
-	// document.getElementById("py").innerHTML =player.y;
-	// document.getElementById("pspeed").innerHTML = "x:" + player.xspeed + " y:" + player.yspeed;
 }
 </script>
 </body>
