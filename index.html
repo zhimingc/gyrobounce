@@ -21,6 +21,8 @@
 		alpha:<span id="alpha"></span> | 
 		beta:<span id="beta"></span> | 
 		gamma:<span id="gamma"></span><br>
+		p.x:<span id="px"></span> | p.y<span id="py"></span><br>
+		p.speed<span id="pspeed"> </span>
 	</span>
 
 	<div id="canvas-container">
@@ -35,31 +37,87 @@
 /* important! for alignment, you should make things
  * relative to the canvas' current width/height.
  */
- function draw() {
+var player={};
+var mobileRatio;
+var gravity=.91;
+var blockspeed=-1.31
 
-  //canvas = document.getElementById("canvas");
-  var height = window.innerHeight;
-  var width=height / (16/9);
+ function init() {
 
-  canvas.width  = width
-  canvas.height = height;
-  //...drawing code...
+	//canvas = document.getElementById("canvas");
+	var height = window.innerHeight;
+	var width=height / (16/9);
+	mobileRatio = 9/16;
+
+	canvas.width  = width
+	canvas.height = height;
+	canvas.imageSmoothingEnabled = true;
+
+
+	//Init vars
+	player.x=width/2;
+	player.y=100;
+	player.xspeed=0;
+	player.yspeed=0;
+
+	//Game Loop
+	var ONE_FRAME_TIME = 1000 / 60 ;
+	var mainloop = function() {
+		updateGame();
+		drawGame();
+	};
+	setInterval( mainloop, ONE_FRAME_TIME );
+
 }
 
-draw()
+function drawGame(){
+
+	var ctx = canvas.getContext("2d");
+
+	//draw Ball
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.beginPath();
+	ctx.arc(player.x,player.y,26 * mobileRatio,0,2*Math.PI);
+	ctx.stroke();
+	ctx.fill();
+
+
+}
+
+function updateGame(){
+
+	//Gravity + movement
+	player.yspeed+=gravity;
+
+	//Update player pos
+	player.x+=player.xspeed;
+	player.y+=player.yspeed;
+
+	if (player.y > window.innerHeight)
+		player.y=0;
+
+
+
+}
+
+ 
+init()
 
 //get orientation info, rolling back if gyro info not available
 if (window.DeviceOrientationEvent) {//
-    window.addEventListener("deviceorientation", function () {//gyro
-    	processGyro(event.beta, event.gamma, event.alpha); 
-    }, true);
+	window.addEventListener("deviceorientation", function () {//gyro
+		processGyro(event.beta, event.gamma, event.alpha); 
+	}, true);
 } 
 
 function processGyro(alpha,beta,gamma)
 {
-	document.getElementById("alpha").innerHTML=alpha;
-	document.getElementById("beta").innerHTML=beta;
-	document.getElementById("gamma").innerHTML =gamma;
+	// document.getElementById("alpha").innerHTML=alpha;
+	// document.getElementById("beta").innerHTML=beta;
+	// document.getElementById("gamma").innerHTML =gamma;
+	// document.getElementById("px").innerHTML =player.x;
+	// document.getElementById("py").innerHTML =player.y;
+	// document.getElementById("pspeed").innerHTML = "x:" + player.xspeed + " y:" + player.yspeed;
 }
 </script>
 </body>
