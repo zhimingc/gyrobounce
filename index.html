@@ -40,13 +40,16 @@
 var player={};
 var mobileRatio;
 var gravity=.91;
-var blockspeed=-1.31
+var blockspeed=-1.31;
+var blocks=[{x:1},{},{},{}];
+var width;
+var height;
 
  function init() {
 
 	//canvas = document.getElementById("canvas");
-	var height = window.innerHeight;
-	var width=height / (16/9);
+	height = window.innerHeight;
+	width=height / (16/9);
 	mobileRatio = 9/16;
 
 	canvas.width  = width
@@ -89,12 +92,18 @@ function updateGame(){
 	//Gravity + movement
 	player.yspeed+=gravity;
 
+	//update blocks
+
 	//Update player pos
 	player.x+=player.xspeed;
 	player.y+=player.yspeed;
 
-	if (player.y > window.innerHeight)
+	//Gameover
+	if (player.y > window.innerHeight){
 		player.y=0;
+		player.yspeed=0;
+		player.x=width/2;
+	}
 
 
 
