@@ -1,0 +1,66 @@
+
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Gyro Game</title>
+
+	<style>
+		#canvas-container {
+			width: 100%;
+			text-align:center;
+		}
+	</style>
+
+
+</head>
+
+
+<body>
+	<span style="position:absolute;">
+		alpha:<span id="alpha"></span> | 
+		beta:<span id="beta"></span> | 
+		gamma:<span id="gamma"></span><br>
+	</span>
+
+	<div id="canvas-container">
+		<canvas id="canvas" width="200" height="100" style="border:1px solid #eeeeee;">
+		</canvas>
+	</div>
+
+
+	<script>
+
+
+/* important! for alignment, you should make things
+ * relative to the canvas' current width/height.
+ */
+ function draw() {
+
+  //canvas = document.getElementById("canvas");
+  var height = window.innerHeight;
+  var width=height / (16/9);
+
+  canvas.width  = width
+  canvas.height = height;
+  //...drawing code...
+}
+
+draw()
+
+//get orientation info, rolling back if gyro info not available
+if (window.DeviceOrientationEvent) {//
+    window.addEventListener("deviceorientation", function () {//gyro
+    	processGyro(event.beta, event.gamma, event.alpha); 
+    }, true);
+} 
+
+function processGyro(alpha,beta,gamma)
+{
+	document.getElementById("alpha").innerHTML=alpha;
+	document.getElementById("beta").innerHTML=beta;
+	document.getElementById("gamma").innerHTML =gamma;
+}
+</script>
+</body>
+</html>
