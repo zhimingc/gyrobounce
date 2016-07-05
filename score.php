@@ -15,10 +15,11 @@ $conn->query(
 	 	score int(11) NOT NULL
 	)"
 );
-
+echo "Starting";
 //Post 
 header('Content-Type: application/json');
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
+	echo "post";
 	$name = $_POST['name'];
 	$score = $_POST['score'];
 	if ($name && $score){
@@ -34,6 +35,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 }
 //Else return results
 else{
+	echo "get";
 	$myArray = array();
 	if ($result = $conn->query("SELECT * FROM scores order by score desc")) {
 
