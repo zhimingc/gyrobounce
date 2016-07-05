@@ -203,8 +203,9 @@ function drawMenu(){
 	// leaderboard
 	if(leaderboard){
 		ctx.fillText("Leaderboard: \n",10,height/2 -20);
+		ctx.font = "18px Arial";
 		for (var i = 0; i < leaderboard.length; i++) {
-			ctx.fillText("Leaderboard: \n" + leaderboard[i].name +": "+ leaderboard[i].bestscore,10,height/2 + (20 * i));
+			ctx.fillText(i + ": \n" + leaderboard[i].name +": "+ leaderboard[i].bestscore,10,height/2 + (26 * i));
 		}
 		
 	}
