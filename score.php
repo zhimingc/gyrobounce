@@ -16,14 +16,15 @@ if ($conn->query(
 	"CREATE TABLE IF NOT EXISTS $db.scores(
 	  	id int(11) NOT NULL auto_increment,   
 	 	name VARCHAR(16) NOT NULL,
-	 	score int(11) NOT NULL
+	 	score int(11) NOT NULL,
+	 	PRIMARY KEY (id)
 	)"
 )==true){
-echo "New record created successfully";
+// echo "New record created successfully";
 } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
 }
-	
+
 // echo "Starting";
 //Post 
 header('Content-Type: application/json');
