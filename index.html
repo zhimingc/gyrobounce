@@ -202,10 +202,11 @@ function drawMenu(){
 	ctx.font = "24px Arial";
 	// leaderboard
 	if(leaderboard){
-		ctx.fillText("Leaderboard: \n",10,height/2 -20);
+		ctx.fillText("Top 10 Leaderboard: \n",10,height/2 -20);
 		ctx.font = "18px Arial";
 		for (var i = 0; i < leaderboard.length; i++) {
-			ctx.fillText(i + ": \n" + leaderboard[i].name +": "+ leaderboard[i].bestscore,10,height/2 + (26 * i));
+			ctx.fillText((i + 1) + ": \n" + leaderboard[i].name +": "+ leaderboard[i].bestscore,10,height/2 + (22 * i));
+			if (i==9)break;
 		}
 		
 	}
