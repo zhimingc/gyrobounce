@@ -30,7 +30,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 //Else return results
 else{
 	$myArray = array();
-	if ($result = $mysqli->query("SELECT * FROM scores order by score desc")) {
+	if ($result = $conn->query("SELECT * FROM scores order by score desc")) {
 
 	    while($row = $result->fetch_array(MYSQL_ASSOC)) {
 	            $myArray[] = $row;
@@ -39,6 +39,6 @@ else{
 		}
 	$result->close();
 }
-$mysqli->close();
+$conn->close();
 
 ?>
