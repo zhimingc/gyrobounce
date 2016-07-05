@@ -202,7 +202,7 @@ function drawMenu(){
 	ctx.font = "24px Arial";
 	// leaderboard
 	if(leaderboard){
-		ctx.fillText("Leaderboard: \n" + leaderboard[0].name ": " leaderboard[0].score+,10,50);
+		ctx.fillText("Leaderboard: \n" + leaderboard[0].name +": "+ leaderboard[0].score,10,50);
 	}
 	//egg
 	ctx.drawImage(sprites[4+eggCount].image,width/2 - (64/2) ,80 - 64/2,64,64);
