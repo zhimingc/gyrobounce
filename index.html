@@ -271,10 +271,17 @@ function getHighScores(){
 }
 
 function postHighScore(){
+	var name;
+	if (!localStorage.name){
+		name = prompt("You have reach your personal high score! Please enter your name for the leaderboard: ");
+		localStorage.name=name;
+	}else{
+		name=localStorage.name;
+	}
 	var request = new XMLHttpRequest();
 	request.open('POST', '/score.php', true);
 	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-	request.send("name=Test&score=" + localStorage.highscore);
+	request.send("name="+name+"&score=" + localStorage.highscore);
 }
 
 //get orientation info, rolling back if gyro info not available
