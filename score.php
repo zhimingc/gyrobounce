@@ -37,8 +37,6 @@ else{
 	    }
 	    echo json_encode($myArray);
 		}
-	$result->close();
 }
-$conn->close();
 
 ?>
