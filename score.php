@@ -45,9 +45,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 }
 //Else return results
 else{	
-	echo "get";
+	// echo "get";
 	$myArray = array();
-	if ($result = $conn->query("SELECT * FROM scores order by score desc")) {
+	if ($result = $conn->query("SELECT id, name, max(score) FROM scores group by name order by score desc")) {
 
 	    while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	            $myArray[] = $row;
