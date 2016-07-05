@@ -49,7 +49,7 @@ else{
 	$myArray = array();
 	if ($result = $conn->query("SELECT * FROM scores order by score desc")) {
 
-	    while($row = $result->fetch_array(MYSQL_ASSOC)) {
+	    while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 	            $myArray[] = $row;
 	    }
 	    echo json_encode($myArray);
