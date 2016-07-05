@@ -34,6 +34,9 @@
 	<script>
 //0,0 is top left in Canvas
 var player={};
+var Gameover=true;
+var eggTapped=false;
+var eggCount=0;
 var mobileRatio = 9/16;;
 var height = window.innerHeight;
 var width=height / (16/9);;
@@ -51,7 +54,7 @@ var blocks=[
 {x:0,y:vgap*2},
 {x:0,y:vgap*3}];
 var score=0;
-var imagenames=['fall_left.png','fall_right.png','up_left.png','up_right.png'];
+var imagenames=['fall_left.png','fall_right.png','up_left.png','up_right.png','egg_1.png','egg_2.png','egg_3.png','egg_4.png','egg_5.png'];
 var sprites = [];
 var pipsize=52;
 // var pipsize=height * 0.045;
@@ -65,8 +68,6 @@ function init() {
 		drawing.src = 'pip/' + imagenames[i];
 		sprites.push({name: imagenames[i],image:drawing});
 	}
-	 // can also be a remote URL e.g. http://
-	// drawing.onload = function() {};
 
 	if (!localStorage.highscore)
 		localStorage.highscore=0;
@@ -104,9 +105,6 @@ function drawGame(){
 	//draw Ball
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
-	// ctx.arc(player.x,player.y,19 * mobileRatio,0,2*Math.PI);
-	// ctx.stroke();
-	// ctx.fill();
 
 	ctx.drawImage(sprites[currentSprite].image,player.x - (pipsize/2) ,player.y - pipsize/2,pipsize,pipsize);
 	
@@ -167,8 +165,11 @@ function updateGame(){
 
 
 	//Gameover scenarios
-	if (player.y > window.innerHeight || player.y<5)
+	if (player.y > window.innerHeight || player.y<5){
+		Gameover=true;
+		eggCount=3;
 		init();	
+	}
 
 	for (var i = 0; i < blocks.length; i++) {
 		var block = blocks[i];
@@ -194,14 +195,44 @@ function updateGame(){
 	}
 }
 
-init()
+function drawMenu(){
+	var ctx = canvas.getContext("2d");
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.font = "16px Arial";
+	// ctx.fillText("Score: " + Math.round(score) ,10,50);
+
+	//egg
+	ctx.drawImage(sprites[4+eggCount].image,width/2 - (64/2) ,80 - 64/2,64,64);
+
+
+
+
+}
+
+init();
 	//Game Loop
 	var ONE_FRAME_TIME = 1000 / 60 ;
 	var mainloop = function() {
-		updateGame();
-		drawGame();
+		if(!Gameover){
+			updateGame();
+			drawGame();
+		}
+		else
+			drawMenu();
+
 	};
 	setInterval( mainloop, ONE_FRAME_TIME );
+
+//add click listener
+window.addEventListener("click", function(){
+	console.log("Click");
+	if(Gameover){
+		eggCount++;
+		if (eggCount>3)
+			Gameover=false;
+	}
+
+});
 
 //get orientation info, rolling back if gyro info not available
 if (window.DeviceOrientationEvent) {//
