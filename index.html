@@ -47,7 +47,7 @@ var blockwidth=width*0.28;
 var blockheight = height*0.035;
 var jumpCountdown=0; // Ticks town to 0, if 0 can jump
 var blocks=[
-{x:width/2,y:vgap},
+{x:width/2,y:vgap,visibile:false},
 {x:0,y:vgap*2},
 {x:0,y:vgap*3}];
 var score=0;
@@ -70,15 +70,18 @@ function init() {
 	player.yspeed=0;
 
 	//reset blocks except first so player can bounce on it
-	blocks[0]={x:width/2,y:vgap};
-	for (var i = 1; i < blocks.length; i++) {
+	blocks[0]={x:width/2 - (blockwidth/2),y:vgap,visibile:false};
+	blocks[1]={x:width/2 - (blockwidth/2) ,y:vgap*2,visibile:true};
+	for (var i = 2; i < blocks.length; i++) {
+		// blocks[i].visibile=true
 		blocks[i].y=vgap*(i+1);
 		resetBlock(blocks[i]);
 	}
 }
 
 function resetBlock(block){
-	block.x=Math.floor((Math.random() * (width - (width*0.2)  )) + 1);
+	block.visibile=true
+	block.x=Math.floor((Math.random() * (width - (blockwidth)  )) + 1);
 }
 
 function drawGame(){
@@ -99,7 +102,8 @@ function drawGame(){
 		grd.addColorStop(1,"purple");
 		// Fill with gradient
 		ctx.fillStyle = grd;
-		ctx.fillRect(block.x,block.y,blockwidth,blockheight);
+		if(block.visibile)
+			ctx.fillRect(block.x,block.y,blockwidth,blockheight);
 	}
 	//Draw Text
 	var ctx = canvas.getContext("2d");
@@ -141,7 +145,7 @@ function updateGame(){
 	for (var i = 0; i < blocks.length; i++) {
 		var block = blocks[i];
 		//Player Hit Detection of blocks, only if jump is not on cooldown
-		if (jumpCountdown==0){
+		if (jumpCountdown==0 && block.visibile!=false){
 			var xdif=player.x-block.x;
 			var ydif=player.y-block.y;				
 			if (xdif >= 0 && xdif <= blockwidth ){ //x and y hit
