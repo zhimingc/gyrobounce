@@ -26,15 +26,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		// $result = $conn->query("SELECT * FROM scores order by score desc")
 		$sql = "INSERT INTO scores (name, score) VALUES ('$name', '$score')";
 		echo $sql;
-		if ($conn->query($sql) === TRUE) {
-		    echo "{status:'ok', name: '$name', score: '$score'}";
-		} else {
-		    echo "{status: 'error', error: '$sql - $conn->error'}";
-		}
+		// if ($conn->query($sql) === TRUE) {
+		//     echo "{status:'ok', name: '$name', score: '$score'}";
+		// } else {
+		//     echo "{status: 'error', error: '$sql - $conn->error'}";
+		// }
 	}
 }
 //Else return results
-else{
+else{	
 	echo "get";
 	$myArray = array();
 	if ($result = $conn->query("SELECT * FROM scores order by score desc")) {
