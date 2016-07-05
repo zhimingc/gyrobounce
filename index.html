@@ -53,6 +53,7 @@ var blocks=[
 {x:width/2,y:vgap,visibile:false},
 {x:0,y:vgap*2},
 {x:0,y:vgap*3}];
+var leaderboard;
 var score=0;
 var imagenames=['fall_left.png','fall_right.png','up_left.png','up_right.png','egg_1.png','egg_2.png','egg_3.png','egg_4.png','egg_5.png'];
 var sprites = [];
@@ -198,9 +199,11 @@ function updateGame(){
 function drawMenu(){
 	var ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.font = "16px Arial";
-	// ctx.fillText("Score: " + Math.round(score) ,10,50);
-
+	ctx.font = "24px Arial";
+	// leaderboard
+	if(leaderboard){
+		ctx.fillText("Leaderboard: \n" + leaderboard[0].name ": " leaderboard[0].score+,10,50);
+	}
 	//egg
 	ctx.drawImage(sprites[4+eggCount].image,width/2 - (64/2) ,80 - 64/2,64,64);
 
@@ -208,7 +211,7 @@ function drawMenu(){
 
 
 }
-
+getHighScores();
 init();
 	//Game Loop
 	var ONE_FRAME_TIME = 1000 / 60 ;
@@ -233,6 +236,28 @@ window.addEventListener("click", function(){
 	}
 
 });
+
+function getHighScores(){
+	var request = new XMLHttpRequest();
+	request.open('GET', '/score.php', true);
+
+	request.onload = function() {
+	  if (request.status >= 200 && request.status < 400) {
+	    // Success!
+	    var data = JSON.parse(request.responseText);
+	    leaderboard=data;
+	  } else {
+	    // We reached our target server, but it returned an error
+	    console.log("failed getting high scores");
+	  }
+	};
+
+	request.onerror = function() {
+	  // There was a connection error of some sort
+	};
+
+	request.send();
+}
 
 //get orientation info, rolling back if gyro info not available
 if (window.DeviceOrientationEvent) {//
