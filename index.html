@@ -70,10 +70,8 @@ function init() {
 		sprites.push({name: imagenames[i],image:drawing});
 	}
 
-	if (!localStorage.highscore)
-		localStorage.highscore=0;
-	if(score>localStorage.highscore)
-		localStorage.highscore=score;
+	getHighScores();
+
 	score=0;
 
 	blockspeed=-2; //Init Canvas
@@ -167,6 +165,13 @@ function updateGame(){
 
 	//Gameover scenarios
 	if (player.y > window.innerHeight || player.y<5){
+		if (!localStorage.highscore)
+			localStorage.highscore=0;
+		if(score>localStorage.highscore){
+			localStorage.highscore=score;
+			postHighScore();
+		}
+
 		Gameover=true;
 		eggCount=3;
 		init();	
@@ -217,7 +222,7 @@ function drawMenu(){
 
 
 }
-getHighScores();
+
 init();
 	//Game Loop
 	var ONE_FRAME_TIME = 1000 / 60 ;
@@ -263,6 +268,13 @@ function getHighScores(){
 	};
 
 	request.send();
+}
+
+function postHighScore(){
+	var request = new XMLHttpRequest();
+	request.open('POST', '/score.php', true);
+	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	request.send("name=Test&score=" + localStorage.highscore);
 }
 
 //get orientation info, rolling back if gyro info not available
