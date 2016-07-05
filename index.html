@@ -204,6 +204,9 @@ function updateGame(){
 function drawMenu(){
 	var ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	var grd = ctx.createLinearGradient(0,0,200,0);
+	grd.addColorStop(0,"red");
+	grd.addColorStop(1,"purple");
 	ctx.font = "24px Arial";
 	// leaderboard
 	if(leaderboard){
@@ -281,6 +284,9 @@ function postHighScore(){
 	var request = new XMLHttpRequest();
 	request.open('POST', '/score.php', true);
 	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	request.onload = function() {
+		getHighScores();
+	};
 	request.send("name="+name+"&score=" + localStorage.highscore);
 }
 
