@@ -27,7 +27,7 @@
 
 <body>
 	<div id="canvas-container">
-		<canvas id="canvas" width="200" height="100" style="border:0px">
+		<canvas id="canvas" width="200" height="100" style="border:0.5px #999">
 		</canvas>
 	</div>
 
@@ -51,8 +51,21 @@ var blocks=[
 {x:0,y:vgap*2},
 {x:0,y:vgap*3}];
 var score=0;
+var imagenames=['fall_left.png','fall_right.png','up_left.png','up_right.png'];
+var sprites = [];
+var pipsize=48;
+var currentSprite=0;
 
 function init() {
+
+	for (var i = 0; i < imagenames.length; i++) {
+		var drawing = new Image();
+		drawing.src = 'pip/' + imagenames[i];
+		sprites.push({name: imagenames[i],image:drawing});
+	}
+	 // can also be a remote URL e.g. http://
+	// drawing.onload = function() {};
+
 	if (!localStorage.highscore)
 		localStorage.highscore=0;
 	if(score>localStorage.highscore)
@@ -89,9 +102,12 @@ function drawGame(){
 	//draw Ball
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
-	ctx.arc(player.x,player.y,19 * mobileRatio,0,2*Math.PI);
-	ctx.stroke();
-	ctx.fill();
+	// ctx.arc(player.x,player.y,19 * mobileRatio,0,2*Math.PI);
+	// ctx.stroke();
+	// ctx.fill();
+
+	ctx.drawImage(sprites[currentSprite].image,player.x - (pipsize/2) ,player.y - pipsize/2,pipsize,pipsize);
+	
 
 	//Draw Blocks
 	for (var i = 0; i < blocks.length; i++) {
@@ -137,6 +153,16 @@ function updateGame(){
 		player.x=width;
 	if (player.x>width)
 		player.x=0;
+
+	//Player Sprites
+	if (player.xspeed<=0)
+		currentSprite=0
+	else currentSprite=1;
+
+	if (jumpCountdown>0){
+		currentSprite+=2;
+	}
+
 
 	//Gameover scenarios
 	if (player.y > window.innerHeight || player.y<5)
