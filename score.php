@@ -13,7 +13,7 @@ $db = substr($url["path"], 1);
 $conn = new mysqli($server, $username, $password, $db);
 
 $conn->query(
-	"CREATE TABLE IF NOT EXISTS scores(
+	"CREATE TABLE IF NOT EXISTS $db.scores(
 	  	id int(11) NOT NULL auto_increment,   
 	 	name VARCHAR(16) NOT NULL,
 	 	score int(11) NOT NULL
