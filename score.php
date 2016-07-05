@@ -5,8 +5,8 @@ $server = $url["host"];
 $username = $url["user"];
 $password = $url["pass"];
 $db = substr($url["path"], 1);
-var_dump( $url );
-$conn = new mysqli($url);
+
+$conn = new mysqli($server, $username, $password, $db);
 
 $conn->query(
 	"CREATE TABLE IF NOT EXISTS scores(
