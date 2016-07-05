@@ -19,22 +19,22 @@ $conn->query(
 	 	score int(11) NOT NULL
 	)"
 );
-echo "Starting";
+// echo "Starting";
 //Post 
 header('Content-Type: application/json');
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-	echo "post";
+	// echo "post";
 	$name = $_POST['name'];
 	$score = $_POST['score'];
 	if ($name && $score){
 		// $result = $conn->query("SELECT * FROM scores order by score desc")
 		$sql = "INSERT INTO scores (name, score) VALUES ('$name', '$score')";
-		echo $sql;
-		// if ($conn->query($sql) === TRUE) {
-		//     echo "{status:'ok', name: '$name', score: '$score'}";
-		// } else {
-		//     echo "{status: 'error', error: '$sql - $conn->error'}";
-		// }
+		// echo $sql;
+		if ($conn->query($sql) === TRUE) {
+		    echo "{status:'ok', name: '$name', score: '$score'}";
+		} else {
+		    echo "{status: 'error', error: '$conn->error'}";
+		}
 	}
 }
 //Else return results
