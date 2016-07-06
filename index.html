@@ -275,7 +275,7 @@ function getHighScores(){
 
 function postHighScore(){
 	var name;
-	if (!localStorage.name){
+	if (!localStorage.name || localStorage.name=="null"){
 		name = prompt("You have reach your personal high score! Please enter your name for the leaderboard: ");
 		localStorage.name=name;
 	}else{
