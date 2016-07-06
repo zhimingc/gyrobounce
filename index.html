@@ -12,7 +12,7 @@
 	<meta name="MobileOptimized" content="720">
 	<meta name="viewport" content="width=device-width, target-densitydpi=300dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
 	<meta name="format-detection" content="telephone=no" />
-	<title>Gyro Bounce</title>
+	<title>Pip Bounce</title>
 
 	<style>
 		html,body{
@@ -49,6 +49,7 @@ var friction = 0.95;
 var blockwidth=width*0.28;
 var blockheight = height*0.035;
 var jumpCountdown=0; // Ticks town to 0, if 0 can jump
+var lastScore=0;
 var blocks=[
 {x:width/2,y:vgap,visibile:false},
 {x:0,y:vgap*2},
@@ -123,6 +124,7 @@ function drawGame(){
 	//Draw Text
 	var ctx = canvas.getContext("2d");
 	ctx.font = "16px Arial";
+	ctx.textAlign="left"; 
 	ctx.fillText("Score: " + Math.round(score) ,10,50);
 	if (localStorage.highscore>0)
 		ctx.fillText("High: " + Math.round(localStorage.highscore) ,10,80);
@@ -171,7 +173,7 @@ function updateGame(){
 			localStorage.highscore=score;
 			postHighScore();
 		}
-
+		lastScore=score;
 		Gameover=true;
 		eggCount=3;
 		init();	
@@ -207,13 +209,18 @@ function drawMenu(){
 	var grd = ctx.createLinearGradient(0,0,200,0);
 	grd.addColorStop(0,"red");
 	grd.addColorStop(1,"purple");
+	ctx.fillStyle = grd;
 	ctx.font = "24px Arial";
+	ctx.textAlign="center"; 
+	// if
+	if(lastScore)
+		ctx.fillText("Last Score: " + lastScore,width/2,height/2 -50);
 	// leaderboard
 	if(leaderboard){
-		ctx.fillText("Top 10 Leaderboard: \n",10,height/2 -20);
+		ctx.fillText("Top 10 Leaderboard: \n",width/2,height/2 -20);
 		ctx.font = "18px Arial";
 		for (var i = 0; i < leaderboard.length; i++) {
-			ctx.fillText((i + 1) + ": \n" + leaderboard[i].name +": "+ leaderboard[i].bestscore,10,height/2 + (22 * i));
+			ctx.fillText((i + 1) + ": \n" + leaderboard[i].name +": "+ leaderboard[i].bestscore,width/2,height/2 + (22 * i));
 			if (i==9)break;
 		}
 		
@@ -256,17 +263,17 @@ function getHighScores(){
 	request.open('GET', '/score.php', true);
 
 	request.onload = function() {
-	  if (request.status >= 200 && request.status < 400) {
+		if (request.status >= 200 && request.status < 400) {
 	    // Success!
 	    var data = JSON.parse(request.responseText);
 	    leaderboard=data;
-	  } else {
+	} else {
 	    // We reached our target server, but it returned an error
 	    console.log("failed getting high scores");
-	  }
-	};
+	}
+};
 
-	request.onerror = function() {
+request.onerror = function() {
 	  // There was a connection error of some sort
 	};
 
