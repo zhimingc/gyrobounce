@@ -213,7 +213,7 @@ function drawMenu(){
 	ctx.font = "24px Arial";
 	ctx.textAlign="center"; 
 	if(lastScore)
-		ctx.fillText("Last Score: " + lastScore,width/2,height/2 -50);
+		ctx.fillText("Last Score: " + Math.floor(lastScore),width/2,height/2 -100);
 	// leaderboard
 	if(leaderboard){
 		ctx.fillText("Top 10 Leaderboard: \n",width/2,height/2 -20);
