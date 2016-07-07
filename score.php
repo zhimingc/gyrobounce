@@ -32,6 +32,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	// echo "post";
 	$name = $_POST['name'];
 	$score = $_POST['score'];
+	if ($score>'4000'){
+		echo "{status: 'dont be a dipshit', error: 'Really? Did you have to do this? Please, remember, youre not being clever. You are not being a troll. You are being a dick.}"
+	}
 	if ($name && $score){
 		// $result = $conn->query("SELECT * FROM scores order by score desc")
 		$sql = "INSERT INTO scores (name, score) VALUES ('$name', '$score')";
