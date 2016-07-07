@@ -212,7 +212,6 @@ function drawMenu(){
 	ctx.fillStyle = grd;
 	ctx.font = "24px Arial";
 	ctx.textAlign="center"; 
-	// if
 	if(lastScore)
 		ctx.fillText("Last Score: " + lastScore,width/2,height/2 -50);
 	// leaderboard
@@ -227,6 +226,14 @@ function drawMenu(){
 	}
 	//egg
 	ctx.drawImage(sprites[4+eggCount].image,width/2 - (64/2) ,80 - 64/2,64,64);
+	//draw pulsating circle
+	ctx.beginPath();
+	ctx.lineWidth=0.33;
+	var d = new Date();
+	var n = d.getMilliseconds();
+	var delta = n/15;
+	ctx.arc(width/2,82 ,32 + delta ,0,2*Math.PI);	
+	ctx.stroke();
 
 
 
