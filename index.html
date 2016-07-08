@@ -166,7 +166,7 @@ function updateGame(){
 
 
 	//Gameover scenarios
-	if (player.y > window.innerHeight || player.y<5){
+	if (player.y > window.innerHeight || player.y<2){
 		if (!localStorage.highscore)
 			localStorage.highscore=0;
 		if(score>localStorage.highscore){
@@ -224,19 +224,23 @@ function drawMenu(){
 		}
 		
 	}
-	//egg
-	ctx.drawImage(sprites[4+eggCount].image,width/2 - (64/2) ,80 - 64/2,64,64);
+	
 	//draw pulsating circle
 	ctx.beginPath();
-	ctx.lineWidth=0.33;
+	ctx.lineWidth=0.2;
 	var d = new Date();
 	var n = d.getMilliseconds();
 	var delta = n/15;
-	ctx.arc(width/2,82 ,32 + delta ,0,2*Math.PI);	
+	ctx.arc(width/2,82 ,20 + delta ,0,2*Math.PI);	
 	ctx.stroke();
+	//egg
+	ctx.drawImage(sprites[4+eggCount].image,width/2 - (64/2) ,80 - 64/2,64,64);
 
-
-
+	if(keys[32] || keys[13]	){
+		eggCount++;
+		if (eggCount>3)
+			Gameover=false;
+	}
 
 }
 
