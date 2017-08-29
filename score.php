@@ -5,10 +5,17 @@ ini_set('display_errors', 1);
 
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-$server = $url["host"];
-$username = $url["user"];
-$password = $url["pass"];
-$db = substr($url["path"], 1);
+if($url){
+	$server = $url["host"];
+	$username = $url["user"];
+	$password = $url["pass"];
+	$db = substr($url["path"], 1);
+} else {
+	$server = "127.0.0.1";
+	$username = "root";
+	$password = "password";
+	$db = "bounce";
+}
 
 $conn = new mysqli($server, $username, $password, $db);
 
