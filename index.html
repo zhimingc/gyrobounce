@@ -304,7 +304,7 @@ canvas.addEventListener("click", function(){
 
 function getHighScores(){
 	var request = new XMLHttpRequest();
-	request.open('GET', '/score.php', true);
+	request.open('GET', 'score.php', true);
 
 	request.onload = function() {
 		if (request.status >= 200 && request.status < 400) {
@@ -333,7 +333,7 @@ function postHighScore(){
 		name=localStorage.name;
 	}
 	var request = new XMLHttpRequest();
-	request.open('POST', '/score.php', true);
+	request.open('POST', 'score.php', true);
 	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 	request.onload = function() {
 		getHighScores();

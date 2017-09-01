@@ -5,7 +5,8 @@ ini_set('display_errors', 1);
 
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-if(strlen($url)>0){
+//if($url["host"]){
+if(false){
 	$server = $url["host"];
 	$username = $url["user"];
 	$password = $url["pass"];
