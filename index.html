@@ -83,9 +83,15 @@ var blocks=[
 {x:width/2,y:vgap,visibile:false},
 {x:0,y:vgap*2},
 {x:0,y:vgap*3}];
+
+var clouds=[
+{x:Math.random()*width,y:vgap,cloudIndex:Math.floor(Math.random() * 3)},
+{x:Math.random()*width,y:vgap*2,cloudIndex:Math.floor(Math.random() * 3)},
+{x:Math.random()*width,y:vgap*3,cloudIndex:Math.floor(Math.random() * 3)}];
+
 var leaderboard;
 var score=0;
-var imagenames=['fall_left.png','fall_right.png','up_left.png','up_right.png','egg_1.png','egg_2.png','egg_3.png','egg_4.png','egg_5.png','mushroom_left.png','mushroom_right.png'];
+var imagenames=['fall_left.png','fall_right.png','up_left.png','up_right.png','egg_1.png','egg_2.png','egg_3.png','egg_4.png','egg_5.png','mushroom_sideview_left.png','mushroom_left.png','mushroom_right.png','mushroom_sideview_right.png','cloud_1.png','cloud_2.png','cloud_3.png'];
 var sprites = [];
 var pipsize=52*scaling;
 // var pipsize=height * 0.045;
@@ -94,7 +100,7 @@ console.log("pipsize = " + pipsize);
 var frame=0;
 
 function init() {
-
+	console.log('initing at width' +  width + " and height " + height)
 	canvas.style.width = window.innerHeight * (9/16) + "px";	
 	// document.getElementById("canvas").style.width = window.innerHeight * (9/16) + "px";
 	// canvas-container.width=canvas.style.width;
@@ -102,11 +108,12 @@ function init() {
 	canvas.style.height = window.innerHeight + "px";
 	// canvas.style.backgroundColor="red";
 
-
-	for (var i = 0; i < imagenames.length; i++) {
-		var drawing = new Image();
-		drawing.src = 'pip/' + imagenames[i];
-		sprites.push({name: imagenames[i],image:drawing});
+	if(sprites.length==0){
+		for (var i = 0; i < imagenames.length; i++) {
+			var drawing = new Image();
+			drawing.src = 'pip/' + imagenames[i];
+			sprites.push({name: imagenames[i],image:drawing});
+		}
 	}
 
 	getHighScores();
@@ -136,7 +143,8 @@ function init() {
 
 function resetBlock(block){
 	block.visibile=true
-	block.x=Math.floor((Math.random() * (width - (blockwidth)  )) + 1);
+	block.x=Math.floor((Math.random() *  (width -blockwidth ))); //* (width*scaling - (blockwidth * scaling)  )) );
+	console.log("range of" + (width*scaling - (blockwidth * scaling)  )  + " setting to " + block.x);
 }
 
 function drawGame(){
@@ -145,6 +153,13 @@ function drawGame(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 
+
+//draw clouds
+	for (var i = 0; i < clouds.length; i++) {
+		var cloud = clouds[i];				
+		ctx.drawImage(sprites[13 + cloud.cloudIndex].image,cloud.x,cloud.y ,blockwidth*2,blockwidth * 2 * 0.5);		
+		console.log("drawing at cloudIndex");
+	}
 	ctx.drawImage(sprites[currentSprite].image,player.x - (pipsize/2) ,player.y - pipsize/2,pipsize,pipsize);
 	
 
@@ -152,16 +167,22 @@ function drawGame(){
 	for (var i = 0; i < blocks.length; i++) {
 		// Create gradient
 		var block = blocks[i];
-		var grd = ctx.createLinearGradient(0,0,width*0.75,0);
-		grd.addColorStop(0,"red");
-		grd.addColorStop(1,"purple");
-		// Fill with gradient
-		ctx.fillStyle = grd;
+		// var grd = ctx.createLinearGradient(0,0,width*0.75,0);
+		// grd.addColorStop(0,"red");
+		// grd.addColorStop(1,"purple");
+		// // Fill with gradient
+		// ctx.fillStyle = grd;
 		if(block.visibile){
-			// ctx.fillRect(block.x,block.y,blockwidth,blockheight);
-			ctx.drawImage(sprites[9].image,block.x,block.y ,blockwidth,blockwidth * 0.8);
+			// ctx.fillRect(block.x,block.y,blockwidth,blockheight); //old code
+			//actualy is a mushroom
+			var mushroomIndex=Math.floor(block.x / (width/4));
+			// console.log((mushroomIndex));
+			// console.log(player.x + " dividied by  " + width);
+			ctx.drawImage(sprites[9 + mushroomIndex].image,block.x,block.y ,blockwidth,blockwidth * 0.8);
 		}
 	}
+
+	
 	//Draw Text
 	var ctx = canvas.getContext("2d");
 	ctx.font = (18 * scaling) + "px Arial";
@@ -240,9 +261,19 @@ function updateGame(){
 		}
 		//Update blocks and reset y if off screen		
 		block.y+=blockspeed;
-		if(block.y < 0) { //reset blocks going off screen
+		if(block.y < -120) { //reset blocks going off screen
 			block.y=height;		
 			resetBlock(block);
+		}
+	}
+
+	//Update clouds
+	for (var i = 0; i < clouds.length; i++) {
+		var cloud = clouds[i];
+		cloud.y+=blockspeed/2;
+		if(cloud.y < -120) { //reset cloud going off screen
+			cloud.y=height;		
+			cloud.x=Math.random()*width;			
 		}
 	}
 }
