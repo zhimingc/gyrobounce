@@ -209,7 +209,7 @@ function updateGame(){
 		player.xspeed+=keymovepower;
 	//Calculate gyro into player pos
 	if (gyro.beta)
-		player.xspeed = (gyro.beta/10);
+		player.xspeed = (gyro.beta/10) * scaling;
 	player.xspeed*=friction;
 	//Update player pos
 	player.x+=player.xspeed;
