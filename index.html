@@ -282,8 +282,8 @@ function drawMenu(){
 	var ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	var grd = ctx.createLinearGradient(0,0,width,0);
-	grd.addColorStop(0,"red");
-	grd.addColorStop(1,"purple");
+	grd.addColorStop(0,"white");
+	grd.addColorStop(1,"white");
 	ctx.fillStyle = grd;
 	ctx.font = (24 * scaling) + "px Arial";
 
@@ -292,7 +292,7 @@ function drawMenu(){
 		ctx.fillText("Last Score: " + Math.floor(lastScore),width/2,height/2 -100);
 	// leaderboard
 	if(leaderboard){
-		ctx.fillText("Top 10 Leaderboard: \n",width/2,height/2 -20);
+		ctx.fillText("Top 10 Leaderboard: \n",width/2,height/2 -20 * scaling);
 		ctx.font = (18 * scaling) + "px Arial";
 		for (var i = 0; i < leaderboard.length; i++) {
 			ctx.fillText((i + 1) + ": \n" + leaderboard[i].name +": "+ leaderboard[i].bestscore,width/2,height/2 + (22 * i * scaling));
