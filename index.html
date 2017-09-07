@@ -158,7 +158,7 @@ function drawGame(){
 	for (var i = 0; i < clouds.length; i++) {
 		var cloud = clouds[i];				
 		ctx.drawImage(sprites[13 + cloud.cloudIndex].image,cloud.x,cloud.y ,blockwidth*2,blockwidth * 2 * 0.5);		
-		console.log("drawing at cloudIndex");
+		
 	}
 	ctx.drawImage(sprites[currentSprite].image,player.x - (pipsize/2) ,player.y - pipsize/2,pipsize,pipsize);
 	
