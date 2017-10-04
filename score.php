@@ -8,6 +8,12 @@ $server = "127.0.0.1";
 $username = "root";
 $password = "password";
 $db = "monsterkitchen";
+$secret="sdhfiuaef89shdf";
+
+if($_GET["secret"] != $secret && $_POST["secret"] != $secret){
+	echo "no secret sorry";
+	exit;
+}
 
 $conn = new mysqli($server, $username, $password, $db);
 
