@@ -3,27 +3,18 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-
-//if($url["host"]){
-if(false){
-	$server = $url["host"];
-	$username = $url["user"];
-	$password = $url["pass"];
-	$db = substr($url["path"], 1);
-} else {
-	$server = "127.0.0.1";
-	$username = "root";
-	$password = "password";
-	$db = "bounce";
-}
+//DB Credentials
+$server = "127.0.0.1";
+$username = "root";
+$password = "password";
+$db = "monsterkitchen";
 
 $conn = new mysqli($server, $username, $password, $db);
 
 if ($conn->query(
 	"CREATE TABLE IF NOT EXISTS $db.scores(
 	  	id int(11) NOT NULL auto_increment,   
-	 	name VARCHAR(16) NOT NULL,
+	 	name VARCHAR(32) NOT NULL,
 	 	score int(11) NOT NULL,
 	 	PRIMARY KEY (id)
 	)"
@@ -40,8 +31,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	// echo "post";
 	$name = $_POST['name'];
 	$score = $_POST['score'];
-	if ($score>='4000'){
-		echo "{status: 'dont be a dipshit', error: 'Really? Did you have to do this? Please, remember, youre not being clever. You are not being a troll. You are being a dick.}";
+	if ($score>='999999'){
+		echo "{status: 'error', error: 'STOP CHEATING'}";
 	}
 	else if ($name && $score){
 		// $result = $conn->query("SELECT * FROM scores order by score desc")
@@ -55,13 +46,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	}
 }
 //Else return results
-else{	
+else{
 	// echo "get";
 	$myArray = array();
-	if ($result = $conn->query("SELECT name, max(score) as bestscore FROM scores group by name order by bestscore desc")) {
+	if ($result = $conn->query("SELECT name, max(score) as bestscore FROM scores group by name order by bestscore desc limit 10")) {
 
 	    while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-	            $myArray[] = $row;
+	        $myArray[] = $row;
 	    }
 	    echo json_encode($myArray);
 		}
